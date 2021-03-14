@@ -16,10 +16,11 @@ class DetailActivity : AppCompatActivity() {
         textViewFileName.text = intent.getStringExtra("name")
         textViewStatusResult.text = intent.getStringExtra("status")
 
-
         button.setOnClickListener {
-            finish()
+
+            this.finish()
         }
+
     }
 
 }
