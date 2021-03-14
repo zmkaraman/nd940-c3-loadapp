@@ -1,11 +1,11 @@
 package com.udacity
 
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
 import kotlin.properties.Delegates
 
 
@@ -41,7 +41,7 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     private val arcPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.YELLOW
+        color = ContextCompat.getColor(context, R.color.colorAccent)
     }
 
 
@@ -53,7 +53,7 @@ class LoadingButton @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        paint.color = Color.BLUE
+        paint.color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
 
         var bounds = canvas?.clipBounds
 
