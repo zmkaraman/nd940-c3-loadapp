@@ -174,11 +174,13 @@ class LoadingButton @JvmOverloads constructor(
 
     override fun performClick(): Boolean {
         super.performClick()
+        return true
+    }
 
+    fun startAnimation(): Boolean {
         buttonState = buttonState.next()
         invalidate()
         return true
     }
-
 
 }

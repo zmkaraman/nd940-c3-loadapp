@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     targetURL = editTextUrl
                     if (URLUtil.isValidUrl(targetURL)) {
+                        customizeButton.startAnimation()
                         download()
                     } else {
                         Toast.makeText(this, "You must enter a valid URL", Toast.LENGTH_SHORT).show()
@@ -73,6 +74,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
             } else {
+
+                customizeButton.startAnimation()
                 download()
             }
         }
