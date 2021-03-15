@@ -11,14 +11,6 @@ private val NOTIFICATION_ID = 0
 
 fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context, detailPendingIntent: PendingIntent) {
 
-    val contentIntent = Intent(applicationContext, MainActivity::class.java)
-    val contentPendingIntent = PendingIntent.getActivity(
-        applicationContext,
-        NOTIFICATION_ID,
-        contentIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
-    )
-
     val builder = NotificationCompat.Builder(
         applicationContext,
         applicationContext.getString(R.string.download_notification_channel_id)
@@ -27,7 +19,7 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setContentTitle(applicationContext
             .getString(R.string.notification_title))
         .setContentText(messageBody)
-        .setContentIntent(contentPendingIntent)
+        .setContentIntent(detailPendingIntent)
         .setAutoCancel(true)
         .addAction(
             R.drawable.ic_assistant_black_24dp,
