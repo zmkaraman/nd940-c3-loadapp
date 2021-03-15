@@ -5,11 +5,11 @@
 
 
     <Transition
-        app:constraintSetStart="@+id/start"
-        app:constraintSetEnd="@+id/end"
-        app:duration="1000">
+        app:constraintSetStart="@+id/end"
+        app:constraintSetEnd="@+id/start"
+        app:duration="1000"
+        app:autoTransition="animateToEnd">
 
-        <OnSwipe app:touchAnchorId="@id/button"></OnSwipe>
     </Transition>
 
 
