@@ -15,21 +15,41 @@ class LoadingButton @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
     private var widthSize = 0
     private var heightSize = 0
-    private var mRight = 0F
 
-    private var downloadStatus : ButtonState = ButtonState.Clicked  // The active selection.
-    private val cornerRadius = 40.0f
+    private val arcDiameter = 40f
 
     private var buttonFirstBGColor = 0
     private var buttonSecondBGColor = 0
     private var buttonTextColor = 0
     private var arcPaintColor = 0
 
+    private var progress: Float = 0f
 
     private var valueAnimator = ValueAnimator()
 
-    private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
 
+    private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Clicked) { p, old, new ->
+
+        valueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            addUpdateListener {
+                progress = animatedValue as Float
+                invalidate()
+            }
+            duration = 3000
+            when (new) {
+                ButtonState.Loading -> {
+                    textPaint.color = Color.GREEN
+                }
+                ButtonState.Completed -> {
+                    textPaint.color = arcPaintColor
+                }
+                ButtonState.Clicked -> {
+                    textPaint.color = buttonTextColor
+                }
+            }
+            start()
+        }
+        invalidate()
     }
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -41,7 +61,8 @@ class LoadingButton @JvmOverloads constructor(
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
         textSize = 45.0f
-        typeface = Typeface.create( "", Typeface.BOLD)
+        typeface = Typeface.create("", Typeface.BOLD)
+        color = ContextCompat.getColor(context, R.color.white)
     }
 
     private val arcPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -57,6 +78,8 @@ class LoadingButton @JvmOverloads constructor(
             buttonTextColor = getColor(R.styleable.LoadingButton_downloadTextColor, 0)
             arcPaintColor = getColor(R.styleable.LoadingButton_arcPaintColor, 0)
         }
+
+
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -68,59 +91,70 @@ class LoadingButton @JvmOverloads constructor(
         var bounds = canvas?.clipBounds
 
         var mRectangle = RectF()
-        var mOval = RectF()
-
-
         if (bounds != null) {
 
-            mRectangle = RectF(bounds.left.toFloat(),
-                bounds.top.toFloat(), 0F, bounds.bottom.toFloat())
-
-            mOval = RectF(bounds.right.toFloat() - (cornerRadius * 2 + 150),
-                bounds.top.toFloat() + 50 ,
-                bounds.right.toFloat() - 150, bounds.bottom.toFloat() -50
+            mRectangle = RectF(
+                bounds.left.toFloat(),
+                bounds.top.toFloat(), 0F, bounds.bottom.toFloat()
             )
 
             canvas?.drawRect(mRectangle, paint)
-
         }
 
-        when (downloadStatus) {
+
+        when (buttonState) {
             ButtonState.Clicked -> {
-                mRight = 0f
-                textPaint.color = buttonTextColor
-                canvas?.drawText(downloadStatus.getLabel(), (width/2).toFloat(), (height/2).toFloat(), textPaint)
+
             }
             ButtonState.Loading -> {
-                textPaint.color = Color.LTGRAY
-
                 if (bounds != null) {
-                    mRight += 10
-                    mRectangle = RectF(bounds.left.toFloat(),
-                        bounds.top.toFloat(), mRight, bounds.bottom.toFloat())
-
+                    mRectangle = RectF(
+                        bounds.left.toFloat(),
+                        bounds.top.toFloat(),
+                        progress * bounds.right.toFloat(),
+                        bounds.bottom.toFloat()
+                    )
                     canvas?.drawRect(mRectangle, paint)
-
-                    if (mRight < bounds.right.toFloat()) {
-                        invalidate()
-                    } else {
-                        downloadStatus = downloadStatus.next()
-                    }
                 }
 
-                canvas?.drawText(downloadStatus.getLabel(), (width/2).toFloat(), (height/2).toFloat(), textPaint)
+                canvas?.drawText(
+                    buttonState.getLabel(),
+                    (width / 2).toFloat(),
+                    (height / 2).toFloat(),
+                    textPaint
+                )
 
-                canvas?.drawArc( mOval, 0f,
-                    mRight/2,
-                    true,arcPaint)
+                var progressVal = progress * 360f
+                canvas?.drawArc(
+                    measuredWidth - 4 * arcDiameter,
+                    arcDiameter,
+                    measuredWidth - 2 * arcDiameter,
+                    measuredHeight - arcDiameter,
+                    0f,
+                    progressVal,
+                    true,
+                    arcPaint
+                )
+
+                if ( progress == 1f) {
+                    buttonState =  buttonState.next() //finish
+                    //invalidate()
+                }
 
             }
             ButtonState.Completed -> {
-                textPaint.color = Color.GREEN
 
-                canvas?.drawText(downloadStatus.getLabel(), (width/2).toFloat(), (height/2).toFloat(), textPaint)
             }
         }
+
+
+        canvas?.drawText(
+            buttonState.getLabel(),
+            (width / 2).toFloat(),
+            (height / 2).toFloat(),
+            textPaint
+        )
+
 
     }
 
@@ -141,7 +175,7 @@ class LoadingButton @JvmOverloads constructor(
     override fun performClick(): Boolean {
         super.performClick()
 
-        downloadStatus = downloadStatus.next()
+        buttonState = buttonState.next()
         invalidate()
         return true
     }

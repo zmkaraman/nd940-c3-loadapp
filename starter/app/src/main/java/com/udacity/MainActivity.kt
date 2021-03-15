@@ -1,7 +1,6 @@
 package com.udacity
 
-import android.animation.ArgbEvaluator
-import android.animation.ObjectAnimator
+
 import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -32,10 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
     private var targetURL: String?  = null
-    private var fileName: String?  = null
     private var downloadStatus: String?  = "Failure"
-
-
 
     lateinit var customizeButton: LoadingButton
 
@@ -97,16 +93,6 @@ class MainActivity : AppCompatActivity() {
             NotificationManager::class.java
         ) as NotificationManager
 
-
-        /*   val detailIntent = Intent(applicationContext, DetailReceiver::class.java)
-           detailIntent.putExtra("name", "asdasdasd")
-           detailIntent.putExtra("status","Download Success 1234")
-           val detailPendingIntent: PendingIntent = PendingIntent.getBroadcast(
-               applicationContext,
-               REQUEST_CODE,
-               detailIntent,
-               FLAGS
-           )*/
 
         val detailIntent = Intent(applicationContext, DetailActivity::class.java)
         detailIntent.putExtra("name", targetURL)
