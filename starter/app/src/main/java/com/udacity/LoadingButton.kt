@@ -6,6 +6,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
 import kotlin.properties.Delegates
 
 
@@ -18,6 +19,11 @@ class LoadingButton @JvmOverloads constructor(
 
     private var downloadStatus : ButtonState = ButtonState.Clicked  // The active selection.
     private val cornerRadius = 40.0f
+
+    private var buttonFirstBGColor = 0
+    private var buttonSecondBGColor = 0
+    private var buttonTextColor = 0
+    private var arcPaintColor = 0
 
 
     private var valueAnimator = ValueAnimator()
@@ -39,19 +45,25 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     private val arcPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.colorAccent)
+        color = ContextCompat.getColor(context, R.color.white)
     }
-
 
     init {
         isClickable = true
-    }
 
+        context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
+            buttonFirstBGColor = getColor(R.styleable.LoadingButton_downloadBGColor, 0)
+            buttonSecondBGColor = getColor(R.styleable.LoadingButton_downloadingBGColor, 0)
+            buttonTextColor = getColor(R.styleable.LoadingButton_downloadTextColor, 0)
+            arcPaintColor = getColor(R.styleable.LoadingButton_arcPaintColor, 0)
+        }
+    }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        paint.color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
+        arcPaint.color = arcPaintColor
+        paint.color = buttonSecondBGColor
 
         var bounds = canvas?.clipBounds
 
@@ -76,8 +88,7 @@ class LoadingButton @JvmOverloads constructor(
         when (downloadStatus) {
             ButtonState.Clicked -> {
                 mRight = 0f
-                textPaint.color = Color.WHITE
-
+                textPaint.color = buttonTextColor
                 canvas?.drawText(downloadStatus.getLabel(), (width/2).toFloat(), (height/2).toFloat(), textPaint)
             }
             ButtonState.Loading -> {
